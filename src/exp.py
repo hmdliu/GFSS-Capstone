@@ -1,5 +1,5 @@
 
-LOSS_ID = {'c': 'ce', 'd': 'wdc', 'w': 'wce'}
+LOSS_ID = {'c': 'ce', 'd': 'wdc', 'w': 'wce', 'u': 'uce'}
 
 def modify_config(args, date, meta_cfg, exp_cfg):
 
@@ -12,7 +12,6 @@ def modify_config(args, date, meta_cfg, exp_cfg):
 
     # reset meta config (scalable)
     exp_dict['inner_loss'] = LOSS_ID[meta_cfg[0]]               # default: w (wce)
-    exp_dict['meta_loss'] = LOSS_ID[meta_cfg[1]]                # default: w (wce)
 
     # reset training config
     assert exp_cfg[-4] in ('p', 'c')                            # dataset: p (pascal) | c (coco)

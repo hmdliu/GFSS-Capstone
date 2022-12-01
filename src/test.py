@@ -135,9 +135,9 @@ def main(args: argparse.Namespace) -> None:
     val_FBIoU_dict = {}
     start_time = time.time()
     if args.debug_flag:
-        args.n_runs = 5
-        args.log_freq = 5
-        args.test_num = 20
+        args.n_runs = 3
+        args.log_freq = 10
+        args.test_num = 40
 
     # main loop
     for val_idx in range(1, args.n_runs+1):
@@ -199,7 +199,7 @@ def validate_epoch(args, val_idx, backbone, meta_model, val_loader):
         label_s = label_s.squeeze(0)    # [n_shots, im_size, im_size]
 
         # forward meta model
-        pred, loss = meta_model(backbone, img_s, img_q, label_s, label_q, img_b, label_b, cls_b)
+        label, pred, loss = meta_model(backbone, img_s, img_q, label_s, label_q, img_b, label_b, cls_b)
 
         # get num of predictions
         try:
@@ -215,8 +215,8 @@ def validate_epoch(args, val_idx, backbone, meta_model, val_loader):
         
         # update losses & metrics
         for i in range(n_pred):
-            cls = cls_n if i == 0 else cls_b
-            intrs, union, target = intersectionAndUnionGPU(pred[i].argmax(1), label_q, 2, 255)
+            cls = cls_n if i != (n_pred - 1) else cls_b
+            intrs, union, target = intersectionAndUnionGPU(pred[i].argmax(1), label[i], 2, 255)
             intrs, union, target = intrs.cpu(), union.cpu(), target.cpu()
             all_intrs[i] += intrs
             all_union[i] += union
@@ -240,7 +240,7 @@ def validate_epoch(args, val_idx, backbone, meta_model, val_loader):
     for c in sorted(mIoU_meter[0].keys()):
         info_list.append(f"==> Testing: novel class {c} mIoU {mIoU_meter[0][c]:.4f}")
     for c in sorted(mIoU_meter[1].keys()):
-        info_list.append(f"==> Testing: base class {c} mIoU {mIoU_meter[0][c]:.4f}")
+        info_list.append(f"==> Testing: base class {c} mIoU {mIoU_meter[1][c]:.4f}")
     info_list.append(f"==> Testing: {' | '.join([f'FB-IoU{i} {FBIoU_meter[i]:.4f}' for i in range(n_pred)])}")
     log('\n'.join(info_list))
 

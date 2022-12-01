@@ -135,15 +135,15 @@ class DecoderSimple(nn.Module):
             self.classifier.bias.data[:bias.shape[0]] = bias.clone()
         return self.state_dict()
     
-    def forward_base(self, cls_b, x, im_size=None):
-        pred_all = self.forward(x, im_size)
-        pred_base = torch.cat((pred_all[:, :1], pred_all[:, cls_b:cls_b+1]), dim=1)
-        return pred_base
-
-    def forward_novel(self, x, im_size=None):
-        pred_all = self.forward(x, im_size)
-        pred_novel = torch.cat((pred_all[:, :1], pred_all[:, -1:]), dim=1)
-        return pred_novel
+    def forward_binary(self, x, im_size=None, fg_idx=-1):
+        pred = self.forward(x, im_size)
+        pred_all = pred.clone()
+        if fg_idx == -1:
+            fg_idx = pred.shape[1] - 1
+        pred_fg = pred[:, fg_idx:fg_idx+1].clone()
+        pred[:, fg_idx:fg_idx+1] = -100
+        pred_bg = pred.max(dim=1, keepdim=True).values
+        return torch.cat((pred_bg, pred_fg), dim=1), pred_all
 
     def forward(self, x, im_size=None):
         if len(x.size()) == 3:

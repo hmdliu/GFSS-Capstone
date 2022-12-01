@@ -41,6 +41,22 @@ def weighted_ce_loss(pred, label, weight=None, ignore_index=255, reduction='mean
     )
     return criterion(pred, label)
 
+def unbiased_ce_loss(pred, label, fg_idx=-1, weight=None, ignore_index=255, reduction='mean'):
+    if weight is None:
+        count = torch.bincount(label.view(-1))
+        weight = torch.tensor([1.0, count[0]/count[1]])
+    if torch.cuda.is_available():
+        weight = weight.cuda()
+    pred = F.softmax(pred, dim=1)
+    if fg_idx == -1:
+        pred_fg = pred[:, -1:]
+        pred_bg = pred[:, :-1].sum(dim=1, keepdim=True)
+    else:
+        pred_fg = pred[:, fg_idx:fg_idx+1]
+        pred_bg = pred[:, :fg_idx].sum(dim=1, keepdim=True) + pred[:, fg_idx+1:].sum(dim=1, keepdim=True)
+    pred = torch.cat((pred_bg, pred_fg), dim=1)
+    return F.nll_loss(torch.log(pred), label, weight=weight, ignore_index=ignore_index, reduction=reduction)
+
 def weighted_dice_loss(prediction, target_seg, weighted_val=1.0, reduction='sum', eps=1e-8):
     """
     Weighted version of Dice Loss
@@ -384,6 +400,7 @@ def get_ig_mask(sim, s_label, q_label, pd_q0, pd_s):
 
 LOSS_DICT = {
     'ce': ce_loss,
+    'uce': unbiased_ce_loss,
     'wce': weighted_ce_loss,
     'wdc': weighted_dice_loss
 }

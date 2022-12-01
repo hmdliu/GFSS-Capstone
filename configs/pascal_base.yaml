@@ -62,16 +62,12 @@ MODEL:
   extra_tokens_num: 0
   decoder: 
   feats_type: cnn
-  inner_loss: wce
-  meta_loss: wce
+  inner_loss: uce
+  meta_loss: uce
   meta_model: base
   norm_b: False
   norm_s: False
   norm_q: True
-  heads: 4
-  att_dropout: 0.5
-  loss_idx: 1
-  use_amp: True
 
 EVALUATION:
   shot: 1
@@ -79,6 +75,6 @@ EVALUATION:
   batch_size_val: 
   manual_seed: 42
   test_num: 20000
-  n_runs: 5
-  n_pred: 2
-  save_flag: True
+  n_runs: 1
+  n_pred: 3
+  save_flag: False
