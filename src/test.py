@@ -83,7 +83,7 @@ def main(args: argparse.Namespace) -> None:
     if args.resume_weight:
         lines = []
         args.resume_weight = f'pretrained/{args.train_name}/split{args.train_split}/pspnet_resnet{args.layers}/best.pth'
-        if args.train_name == 'coco' and args.contrastive:
+        if args.contrastive:
             args.resume_weight = args.resume_weight.replace('best.pth', 'ctr.pth')
         if os.path.isfile(args.resume_weight):
             lines.append(f'\n==> loading backbone weight from: {args.resume_weight}')
