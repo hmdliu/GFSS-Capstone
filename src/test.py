@@ -127,8 +127,6 @@ def main(args: argparse.Namespace) -> None:
             p.requires_grad = False
         meta_model.eval()
 
-    sys.exit(0)
-
     # init dataloaders
     val_loader, _ = get_val_loader(args, episodic=True)
 
