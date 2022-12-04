@@ -128,7 +128,10 @@ class DecoderSimple(nn.Module):
         self.classifier.bias.data = bias.clone()
 
     def init_base(self, state_dict):
-        weights = state_dict['module.classifier.weight']
+        try:
+            weights = state_dict['module.classifier.weight']
+        except:
+            weights = state_dict['classifier.cls.weight']
         self.classifier.weight.data[:weights.shape[0]] = weights.clone()
         return self.state_dict(), weights.shape[0]
     

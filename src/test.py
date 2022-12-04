@@ -83,6 +83,8 @@ def main(args: argparse.Namespace) -> None:
     if args.resume_weight:
         lines = []
         args.resume_weight = f'pretrained/{args.train_name}/split{args.train_split}/pspnet_resnet{args.layers}/best.pth'
+        if args.train_name == 'coco' and args.contrastive:
+            args.resume_weight = args.resume_weight.replace('best.pth', 'ctr.pth')
         if os.path.isfile(args.resume_weight):
             lines.append(f'\n==> loading backbone weight from: {args.resume_weight}')
             pre_dict, cur_dict = torch.load(args.resume_weight)['state_dict'], backbone.state_dict()
@@ -124,6 +126,8 @@ def main(args: argparse.Namespace) -> None:
         for p in meta_model.meta_params():
             p.requires_grad = False
         meta_model.eval()
+
+    sys.exit(0)
 
     # init dataloaders
     val_loader, _ = get_val_loader(args, episodic=True)

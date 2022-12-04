@@ -23,6 +23,7 @@ DATA:
 
 TRAIN:
   resume_weight: pretrained/pascal/split0/pspnet_resnet50/best.pth
+  contrastive: False  # not available
   meta_weight: 
   batch_size: 1
   epochs: 5
