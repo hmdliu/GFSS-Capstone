@@ -130,10 +130,7 @@ class DecoderSimple(nn.Module):
     def init_base(self, state_dict):
         weights = state_dict['module.classifier.weight']
         self.classifier.weight.data[:weights.shape[0]] = weights.clone()
-        if 'module.classifier.bias' in state_dict:
-            bias = state_dict['module.classifier.bias']
-            self.classifier.bias.data[:bias.shape[0]] = bias.clone()
-        return self.state_dict()
+        return self.state_dict(), weights.shape[0]
     
     def forward_binary(self, x, im_size=None, fg_idx=-1):
         pred = self.forward(x, im_size)

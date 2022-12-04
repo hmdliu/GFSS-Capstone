@@ -25,13 +25,9 @@ class BaseModel(nn.Module):
         assert os.path.isfile(args.resume_weight)
         pretrain_state_dict = torch.load(args.resume_weight)['state_dict']
         self.cls1 = DecoderSimple(n_cls=2, d_encoder=args.encoder_dim)
-        self.cls2 = DecoderSimple(
-            n_cls=args.num_classes_tr,
-            d_encoder=args.encoder_dim,
-            bias=('module.classifier.bias' in pretrain_state_dict)
-        )
-        self.state_dict = self.cls2.init_base(pretrain_state_dict)
-        args.log_func(f"\n==> BaseModel state_dict: {self.state_dict.keys()}")
+        self.cls2 = DecoderSimple(n_cls=args.num_classes_tr, d_encoder=args.encoder_dim)
+        self.state_dict, base_cls_num = self.cls2.init_base(pretrain_state_dict)
+        args.log_func(f"\n==> Base Classifier loaded with {base_cls_num} classes")
 
     def meta_params(self):
         return []
