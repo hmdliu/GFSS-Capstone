@@ -13,7 +13,7 @@ Major references: <a href="https://github.com/dvlab-research/PFENet" target="_bl
 
 ## Clone codebase
 ```shell
-git clone https://github.com/hmdliu/FSS-Codebase && cd FSS-Codebase
+git clone https://github.com/hmdliu/GFSS-Codebase && cd GFSS-Codebase
 ```
 
 ## Preparation
@@ -40,14 +40,14 @@ For ImageNet pre-trained models, please download it <a href="https://drive.googl
 - **src**: Source code. `.py`
 
 ## Sample Usage
-`exp_id` aims to make efficient config modifications for experiment purposes. It follows the format of `[exp_group]_[meta_cfg]_[train_cfg]`, see `src/exp.py` for a sample usage.
+`exp_id` aims to make efficient config modifications for experiment purposes. It follows the format of `[exp_group]_[meta_cfg]_[train_cfg]`, see `src/exp.py` for a sample usage (pascal 1-shot on fold 0).
 ```shell
 # debug mode (i.e., only log to shell)
-python -m src.test --config configs/pascal_base.yaml --exp_id sample_ww_pm11 --debug True
+python -m src.test --config configs/pascal_base.yaml --exp_id sample_uf_pm10 --debug True
 
 # submit to slurm
-sbatch scripts/test_pascal.slurm configs/pascal_base.yaml sample_ww_pm11
+sbatch scripts/test_pascal.slurm configs/pascal_base.yaml sample_uf_pm10
 
-# output dir: results/sample/wd_pm11
-tail results/sample/wd_pm11/output.log
+# output dir: results/sample/uf_pm10
+tail results/sample/uf_pm10/output.log
 ```
