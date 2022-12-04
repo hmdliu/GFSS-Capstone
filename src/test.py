@@ -239,10 +239,15 @@ def validate_epoch(args, val_idx, backbone, meta_model, val_loader):
     runtime = time.time() - start_time
     info_list = []
     info_list.append(f"==> Testing: inference speed {args.test_num / runtime * 60:.0f} iters/min")
+    info_list.append(f"\n==> Testing: 2-way classifier on novel classes")
     for c in sorted(mIoU_meter[0].keys()):
         info_list.append(f"==> Testing: novel class {c} mIoU {mIoU_meter[0][c]:.4f}")
+    info_list.append(f"\n==> Testing: (B+2)-way classifier on novel classes")
     for c in sorted(mIoU_meter[1].keys()):
         info_list.append(f"==> Testing: base class {c} mIoU {mIoU_meter[1][c]:.4f}")
+    info_list.append(f"\n==> Testing: (B+2)-way classifier on base classes")
+    for c in sorted(mIoU_meter[2].keys()):
+        info_list.append(f"==> Testing: base class {c} mIoU {mIoU_meter[2][c]:.4f}")
     info_list.append(f"==> Testing: {' | '.join([f'FB-IoU{i} {FBIoU_meter[i]:.4f}' for i in range(n_pred)])}")
     log('\n'.join(info_list))
 
