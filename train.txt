@@ -1,0 +1,7 @@
+- weight: 10, pascal
+
+sbatch scripts/test_pascal.slurm configs/pascal_mib.yaml mib_1_pm10
+
+- weight: 10, coco
+
+sbatch scripts/test_coco.slurm configs/coco_mib.yaml mib_1_cm10
