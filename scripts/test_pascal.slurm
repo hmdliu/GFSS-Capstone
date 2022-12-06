@@ -8,8 +8,6 @@
 #SBATCH --time=48:00:00
 #SBATCH --gres=gpu
 #SBATCH --partition=a100_1,a100_2,v100,rtx8000
-#SBATCH --mail-type=END
-#SBATCH --mail-user=cz1627@nyu.edu
 
 # job info
 config_path=$1

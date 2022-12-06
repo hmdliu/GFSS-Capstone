@@ -43,11 +43,11 @@ For ImageNet pre-trained models, please download it <a href="https://drive.googl
 `exp_id` aims to make efficient config modifications for experiment purposes. It follows the format of `[exp_group]_[meta_cfg]_[train_cfg]`, see `src/exp.py` for a sample usage (pascal 1-shot on fold 0).
 ```shell
 # debug mode (i.e., only log to shell)
-python -m src.test --config configs/pascal_base.yaml --exp_id sample_uf_pm10 --debug True
+python -m src.test --config configs/pascal_mib.yaml --exp_id sample_t2_pm10 --debug True
 
 # submit to slurm
-sbatch scripts/test_pascal.slurm configs/pascal_base.yaml sample_uf_pm10
+sbatch scripts/test_pascal.slurm configs/pascal_mib.yaml sample_t2_pm10
 
-# output dir: results/sample/uf_pm10
-tail results/sample/uf_pm10/output.log
+# output dir: results/sample/t2_pm10
+tail results/sample/t2_pm10/output.log
 ```

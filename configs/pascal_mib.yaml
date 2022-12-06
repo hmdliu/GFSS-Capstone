@@ -64,9 +64,9 @@ MODEL:
   decoder: 
   feats_type: cnn
   inner_loss: mib
-  kdl_weight: 10
   meta_loss: uce
   meta_model: mib
+  kdl_weight: 10
   norm_b: False
   norm_s: False
   norm_q: True

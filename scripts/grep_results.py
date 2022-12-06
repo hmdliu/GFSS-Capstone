@@ -26,19 +26,14 @@ for dir in sorted(dir_list):
     val_num = len(res) // 6
 
     if val_num == 0:
-        dmp_list.append(','.join(['TBD'] * 9 + [str(val_num), exp_id]))
+        dmp_list.append(','.join(['TBD'] * 4 + [str(val_num), exp_id]))
         res_list.append((dir, val_num, 'TBD', exp_dict))
         continue
     else:
         max_mIoU = res[-6].split()
         avg_mIoU = res[-4].split()
         smt_mIoU = res[-2].split()
-        dmp_list.append(','.join([
-            smt_mIoU[1], smt_mIoU[4], smt_mIoU[7],
-            avg_mIoU[1], avg_mIoU[4], avg_mIoU[7],
-            max_mIoU[1], max_mIoU[4], max_mIoU[7],
-            str(val_num), exp_id
-        ]))    
+        dmp_list.append(','.join([smt_mIoU[1], smt_mIoU[4], smt_mIoU[7], exp_id]))    
         res_list.append((dir, val_num, res[-2], exp_dict))
 
 print('\n[csv]:')

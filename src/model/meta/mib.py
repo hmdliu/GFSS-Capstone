@@ -18,22 +18,22 @@ class MiBModel(nn.Module):
         self.norm_q = args.norm_q
         self.im_size = (args.image_size, args.image_size)
 
-        self.inner_loss = LOSS_DICT[args.inner_loss]
-        self.meta_loss = LOSS_DICT[args.meta_loss]
-        self.wce_loss = LOSS_DICT['wce']
+        self.inner_loss = LOSS_DICT[args.inner_loss]        # mib
+        self.meta_loss = LOSS_DICT[args.meta_loss]          # uce
+        self.wce_loss = LOSS_DICT['wce']                    # wce
 
         assert os.path.isfile(args.resume_weight)
         pretrain_state_dict = torch.load(args.resume_weight)['state_dict']
         self.cls1 = DecoderSimple(n_cls=2, d_encoder=args.encoder_dim)
         self.cls2 = DecoderSimple(n_cls=args.num_classes_tr, d_encoder=args.encoder_dim)
         self.state_dict, base_cls_num = self.cls2.init_base(pretrain_state_dict)
-        args.log_func(f"\n==> Base Classifier loaded with {base_cls_num} classes")
+        args.log_func(f"\n==> cls2: loaded base weights for {base_cls_num} classes")
 
         # old model for mib kd loss
-        self.cls_old = DecoderSimple(n_cls=args.num_classes_tr-1, d_encoder=args.encoder_dim)
-        self.state_dict_old, base_cls_num = self.cls_old.init_base(pretrain_state_dict)
-        args.log_func(f"\n==> Base Classifier (OLD) loaded with {base_cls_num} classes")
-        self.cls_old.eval()
+        self.cls_base = DecoderSimple(n_cls=args.num_classes_tr-1, d_encoder=args.encoder_dim)
+        self.state_dict_old, base_cls_num = self.cls_base.init_base(pretrain_state_dict)
+        args.log_func(f"==> cls_base: loaded base weights for {base_cls_num} classes")
+        self.cls_base.eval()
 
     def meta_params(self):
         return []
@@ -69,8 +69,8 @@ class MiBModel(nn.Module):
             optimizer1.step()
             # cls2: (B+2)-way
             pred_s = self.cls2(f_s, self.im_size)
-            pred_old = self.cls_old(f_s, self.im_size)
-            if self.args.inner_loss == "mib":
+            pred_old = self.cls_base(f_s, self.im_size)
+            if self.args.inner_loss == 'mib':
                 loss_s = self.inner_loss(pred_s, label_s, pred_old, fg_idx=-1, weight=weight_s, kdl_weight=self.args.kdl_weight)
             else:
                 loss_s = self.inner_loss(pred_s, label_s, fg_idx=-1, weight=weight_s)
@@ -117,7 +117,7 @@ class MiBModel(nn.Module):
         pred.append(bpred_q)
         loss.append(self.meta_loss(pred_q, label_q, fg_idx=-1, weight=weight_q))
 
-        # pred1: base class with a (B+2)-way classifier
+        # pred2: base class with a (B+2)-way classifier
         bpred_b, pred_b = self.cls2.forward_binary(f_b, self.im_size, fg_idx=cls_b)
         label.append(label_b)
         pred.append(bpred_b)

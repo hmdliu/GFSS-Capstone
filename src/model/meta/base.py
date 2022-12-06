@@ -18,9 +18,9 @@ class BaseModel(nn.Module):
         self.norm_q = args.norm_q
         self.im_size = (args.image_size, args.image_size)
 
-        self.inner_loss = LOSS_DICT[args.inner_loss]
-        self.meta_loss = LOSS_DICT[args.meta_loss]
-        self.wce_loss = LOSS_DICT['wce']
+        self.inner_loss = LOSS_DICT[args.inner_loss]        # uce
+        self.meta_loss = LOSS_DICT[args.meta_loss]          # uce
+        self.wce_loss = LOSS_DICT['wce']                    # wce
 
         assert os.path.isfile(args.resume_weight)
         pretrain_state_dict = torch.load(args.resume_weight)['state_dict']
@@ -107,7 +107,7 @@ class BaseModel(nn.Module):
         pred.append(bpred_q)
         loss.append(self.meta_loss(pred_q, label_q, fg_idx=-1, weight=weight_q))
 
-        # pred1: base class with a (B+2)-way classifier
+        # pred2: base class with a (B+2)-way classifier
         bpred_b, pred_b = self.cls2.forward_binary(f_b, self.im_size, fg_idx=cls_b)
         label.append(label_b)
         pred.append(bpred_b)

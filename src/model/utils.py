@@ -57,6 +57,39 @@ def unbiased_ce_loss(pred, label, fg_idx=-1, weight=None, ignore_index=255, redu
     pred = torch.cat((pred_bg, pred_fg), dim=1)
     return F.nll_loss(torch.log(pred), label, weight=weight, ignore_index=ignore_index, reduction=reduction)
 
+def unbiased_distillation_loss(pred_s, pred_base, mask=None, reduction='mean', alpha=1.):
+
+    assert pred_s.shape[1] - pred_base.shape[1] == 1                # num of novel class == 1
+
+    targets = pred_base * alpha
+    new_bkg_idx = torch.tensor([0] + [x for x in range(targets.shape[1], pred_s.shape[1])]).to(pred_s.device)
+
+    den = torch.logsumexp(pred_s, dim=1)                            # B, H, W
+    outputs_no_bgk = pred_s[:, 1:-1] - den.unsqueeze(dim=1)         # B, OLD_CL, H, W
+    outputs_bkg = torch.logsumexp(torch.index_select(pred_s, index=new_bkg_idx, dim=1), dim=1) - den    # B, H, W
+
+    labels = torch.softmax(targets, dim=1)                          # B, BKG + OLD_CL, H, W
+    loss = (labels[:, 0] * outputs_bkg + (labels[:, 1:] * outputs_no_bgk).sum(dim=1)) / targets.shape[1]
+
+    if mask is not None:
+        loss = loss * mask.float()
+
+    if reduction == 'mean':
+            outputs = -torch.mean(loss)
+    elif reduction == 'sum':
+            outputs = -torch.sum(loss)
+    else:
+        outputs = -loss
+
+    return outputs
+
+def mib_loss(pred_s, label_s, pred_base, fg_idx=-1, weight=None, kdl_weight=10):
+    if kdl_weight == 0:
+        return unbiased_ce_loss(pred_s, label_s, fg_idx=fg_idx, weight=weight)
+    uce_loss = unbiased_ce_loss(pred_s, label_s, fg_idx=fg_idx, weight=weight)
+    kd_loss = unbiased_distillation_loss(pred_s, pred_base, reduction='mean', alpha=1.0)
+    return uce_loss + kd_loss * kdl_weight
+
 def weighted_dice_loss(prediction, target_seg, weighted_val=1.0, reduction='sum', eps=1e-8):
     """
     Weighted version of Dice Loss
@@ -90,47 +123,6 @@ def weighted_dice_loss(prediction, target_seg, weighted_val=1.0, reduction='sum'
     elif reduction == 'mean':
         loss = loss.mean()
     return loss
-
-
-
-
-def unbiased_knowledge_distillation_loss(pred_s, pred_old, mask=None, reduction='mean', alpha=1.):
-
-    new_cl = pred_s.shape[1] - pred_old.shape[1] # number of new class, should == 1
-    assert new_cl == 1
-
-    targets = pred_old * alpha
-
-    new_bkg_idx = torch.tensor([0] + [x for x in range(targets.shape[1], pred_s.shape[1])]).to(pred_s.device)
-
-    den = torch.logsumexp(pred_s, dim=1)                          # B, H, W
-    outputs_no_bgk = pred_s[:, 1:-new_cl] - den.unsqueeze(dim=1)  # B, OLD_CL, H, W
-    outputs_bkg = torch.logsumexp(torch.index_select(pred_s, index=new_bkg_idx, dim=1), dim=1) - den     # B, H, W
-
-    labels = torch.softmax(targets, dim=1)                        # B, BKG + OLD_CL, H, W
-
-    # make the average on the classes 1/n_cl \sum{c=1..n_cl} L_c
-    loss = (labels[:, 0] * outputs_bkg + (labels[:, 1:] * outputs_no_bgk).sum(dim=1)) / targets.shape[1]
-
-    if mask is not None:
-        loss = loss * mask.float()
-
-    if reduction == 'mean':
-            outputs = -torch.mean(loss)
-    elif reduction == 'sum':
-            outputs = -torch.sum(loss)
-    else:
-        outputs = -loss
-
-    return outputs
-
-def mib_loss(pred_s, label_s, pred_old, fg_idx=-1, weight=None, kdl_weight=10):
-
-    uce_loss = unbiased_ce_loss(pred_s, label_s, fg_idx=fg_idx, weight=weight)
-
-    kd_loss = unbiased_knowledge_distillation_loss(pred_s, pred_old, reduction='mean', alpha=1.)
-
-    return uce_loss + kd_loss * kdl_weight
 
 def mask_kmeans(data, n_clusters=5, max_iter=5, log=None, init_centers=None):
 
@@ -441,8 +433,8 @@ def get_ig_mask(sim, s_label, q_label, pd_q0, pd_s):
 
 LOSS_DICT = {
     'ce': ce_loss,
+    'mib': mib_loss,
     'uce': unbiased_ce_loss,
     'wce': weighted_ce_loss,
     'wdc': weighted_dice_loss,
-    'mib': mib_loss,
 }
