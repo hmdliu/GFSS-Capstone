@@ -57,6 +57,7 @@ def unbiased_ce_loss(pred, label, fg_idx=-1, weight=None, ignore_index=255, redu
     pred = torch.cat((pred_bg, pred_fg), dim=1)
     return F.nll_loss(torch.log(pred), label, weight=weight, ignore_index=ignore_index, reduction=reduction)
 
+# credits: https://github.com/fcdl94/MiB/blob/master/utils/loss.py#L139
 def unbiased_distillation_loss(pred_s, pred_base, mask=None, reduction='mean', alpha=1.):
 
     assert pred_s.shape[1] - pred_base.shape[1] == 1                # num of novel class == 1

@@ -1,9 +1,10 @@
 # GFSS-Capstone
 
-Major references: <a href="https://github.com/dvlab-research/PFENet" target="_blank">**PFENet**</a>, <a href="https://github.com/zhiheLu/CWT-for-FSS" target="_blank">**CWT**</a>, <a href="https://github.com/rstrudel/segmenter" target="_blank">**Segmenter**</a>, and <a href="https://github.com/tfzhou/ContrastiveSeg" target="_blank">**ContrastiveSeg**</a>.
-
 ## Intro
-This is a capstone project on generalized few-shot segmentation (GFSS).
+This is a capstone project on generalized few-shot segmentation (GFSS). This repo presents a neat and scalable codebase for GFSS research. The code for our key contributions can be found in the following files:
+- [Main Model](https://github.com/hmdliu/GFSS-Capstone/blob/main/src/model/meta/mib.py)
+- [Contrastive Pre-training](https://github.com/hmdliu/GFSS-Capstone/blob/main/src/contrast.py)
+- [Background Modeling Losses](https://github.com/hmdliu/GFSS-Capstone/blob/main/src/model/utils.py)
 
 ## Requisites
 - Test Env: Python 3.9.7 (Singularity)
@@ -15,7 +16,7 @@ This is a capstone project on generalized few-shot segmentation (GFSS).
 
 ## Clone codebase
 ```shell
-git clone https://github.com/hmdliu/GFSS-Codebase && cd GFSS-Codebase
+git clone https://github.com/hmdliu/GFSS-Capstone && cd GFSS-Capstone
 ```
 
 ## Preparation
@@ -54,6 +55,9 @@ sbatch scripts/test_pascal.slurm configs/pascal_mib.yaml sample_t2_pm10
 # output dir: results/sample/t2_pm10
 tail results/sample/t2_pm10/output.log
 ```
+
+## Credits
+Major References: <a href="https://github.com/dvlab-research/PFENet" target="_blank">**PFENet**</a>, <a href="https://github.com/zhiheLu/CWT-for-FSS" target="_blank">**CWT**</a>, <a href="https://github.com/rstrudel/segmenter" target="_blank">**Segmenter**</a>, <a href="https://github.com/fcdl94/MiB" target="_blank">**MiB**</a>, and <a href="https://github.com/tfzhou/ContrastiveSeg" target="_blank">**ContrastiveSeg**</a>.
 
 ## Group Members
 - Haoming Liu (hl3797@nyu.edu)
