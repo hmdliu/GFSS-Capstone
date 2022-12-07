@@ -1,7 +1,9 @@
-# GFSS-Codebase
-This repo presents a neat and scalable codebase for generalized few-shot segmentation research.
+# GFSS-Capstone
 
-Major references: <a href="https://github.com/dvlab-research/PFENet" target="_blank">**PFENet**</a>, <a href="https://github.com/zhiheLu/CWT-for-FSS" target="_blank">**CWT**</a>, and <a href="https://github.com/rstrudel/segmenter" target="_blank">**Segmenter**</a>.
+Major references: <a href="https://github.com/dvlab-research/PFENet" target="_blank">**PFENet**</a>, <a href="https://github.com/zhiheLu/CWT-for-FSS" target="_blank">**CWT**</a>, <a href="https://github.com/rstrudel/segmenter" target="_blank">**Segmenter**</a>, and <a href="https://github.com/tfzhou/ContrastiveSeg" target="_blank">**ContrastiveSeg**</a>.
+
+## Intro
+This is a capstone project on generalized few-shot segmentation (GFSS).
 
 ## Requisites
 - Test Env: Python 3.9.7 (Singularity)
@@ -29,7 +31,8 @@ bash scripts/prepare_pascal.sh
 You may refer to <a href="https://github.com/dvlab-research/PFENet#datasets-and-data-preparation" target="_blank">PFENet</a> for more details.
 
 ### Pretrained models
-For ImageNet pre-trained models, please download it <a href="https://drive.google.com/file/d/1rMPedZBKFXiWwRX3OHttvKuD1h9QRDbU/view?usp=sharing" target="_blank">here</a> (credits <a href="https://github.com/dvlab-research/PFENet#run-demo--test-with-pretrained-models" target="_blank">PFENet</a>) and unzip as `initmodel/`. For models pre-trained on the base classes, you may find it <a href="https://drive.google.com/file/d/1VPBquiy4DZXu8b6qsSB6XtO5_6jTpXgo/view?usp=sharing" target="_blank">here</a> (credits <a href="https://github.com/zhiheLu/CWT-for-FSS#pre-trained-models-in-the-first-stage" target="_blank">CWT</a>) and rename them as follows: `pretrained/[dataset]/split[i]/pspnet_resnet[layers]/best.pth`.
+For ImageNet pre-trained weights, please download it <a href="https://drive.google.com/file/d/1rMPedZBKFXiWwRX3OHttvKuD1h9QRDbU/view?usp=sharing" target="_blank">here</a> (credits <a href="https://github.com/dvlab-research/PFENet#run-demo--test-with-pretrained-models" target="_blank">PFENet</a>) and unzip as `initmodel/`. \
+For base class pre-trained weights, you may find it <a href="https://drive.google.com/file/d/1VPBquiy4DZXu8b6qsSB6XtO5_6jTpXgo/view?usp=sharing" target="_blank">here</a> (credits <a href="https://github.com/zhiheLu/CWT-for-FSS#pre-trained-models-in-the-first-stage" target="_blank">CWT</a>) and rename them as follows: `pretrained/[dataset]/split[i]/pspnet_resnet[layers]/best.pth`. We'll release our weights shortly.
 
 ## Dir explanations
 - **initmodel**: ImageNet pre-trained backbone weights. `.pth`
@@ -51,3 +54,12 @@ sbatch scripts/test_pascal.slurm configs/pascal_mib.yaml sample_t2_pm10
 # output dir: results/sample/t2_pm10
 tail results/sample/t2_pm10/output.log
 ```
+
+## Group Members
+- Haoming Liu (hl3797@nyu.edu)
+- Chengyu Zhang (cz1627@nyu.edu)
+- Xiaochen Lu (xl3139@nyu.edu)
+
+## Acknowledgements
+We thank Professor Li Guo for her consistent guidance throughout the project. We thank Professor Hongyi Wen for his suggestions on the project write-up. This work was supported through the NYU IT High Performance Computing
+resources, services, and staff expertise.
