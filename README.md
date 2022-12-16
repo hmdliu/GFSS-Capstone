@@ -56,6 +56,15 @@ sbatch scripts/test_pascal.slurm configs/pascal_mib.yaml sample_t2_pm10
 tail results/sample/t2_pm10/output.log
 ```
 
+## Visualizations
+Qualitative Ablation on Contrastive Loss (left) and Distillation Loss (right):
+
+
+![image](https://github.com/hmdliu/Tmp-Files/blob/main/vis.png?raw=true)
+
+
+The repo for drawing utilities can be found [here](https://github.com/NigelLu/Draw-Utilities).
+
 ## Credits
 Major References: <a href="https://github.com/dvlab-research/PFENet" target="_blank">**PFENet**</a>, <a href="https://github.com/zhiheLu/CWT-for-FSS" target="_blank">**CWT**</a>, <a href="https://github.com/rstrudel/segmenter" target="_blank">**Segmenter**</a>, <a href="https://github.com/fcdl94/MiB" target="_blank">**MiB**</a>, and <a href="https://github.com/tfzhou/ContrastiveSeg" target="_blank">**ContrastiveSeg**</a>.
 
